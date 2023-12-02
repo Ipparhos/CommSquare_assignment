@@ -6,9 +6,8 @@ Components:
 Responsible for ingesting raw data from CSV files.
 Monitors the designated folder for new files.
 Parses and validates the CSV data.
-Data Processing:
-
-2. Processes the raw data to calculate the required KPIs.
+2. Data Processing:
+Processes the raw data to calculate the required KPIs.
 Aggregates data based on the specified intervals (5-minute and 1-hour).
 Identifies top services and cells as per KPI definitions.
 Creates records for each KPI.
