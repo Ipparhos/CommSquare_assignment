@@ -49,25 +49,3 @@ Logs events, errors, and processing details for monitoring and debugging purpose
 Configuration Management → Data Ingestion, Data Processing, Database Storage:
 
 Provides configuration parameters to these components.
-
-
-+---------------------+     +------------------------+     +------------------+
-|    Data Ingestion   | --> |    Data Processing     | --> | Database Storage |
-+---------------------+     +------------------------+     +------------------+
-        |                               |                             |
-        |                               |                             |
-	|				|			      |
-	|				|			      |
-	|			+-------------+			      |
-        |-----------------------|  Scheduler  |-----------------------|
-                                +-------------+
-					|
-					|
-                	         +-------------+
-                                 |   Logging   |
-                                 +-------------+
-					|
-					|
-			       +------------------+ 
-			       |  Configuration   |
-			       +------------------+       
