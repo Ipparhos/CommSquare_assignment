@@ -1,0 +1,97 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..62a97aa
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,2 @@
++/.venv/
++/.idea
+\ No newline at end of file
+diff --git a/data_manipulation.py b/data_manipulation.py
+index 74d77c3..423674d 100644
+--- a/data_manipulation.py
++++ b/data_manipulation.py
+@@ -40,17 +40,17 @@ def calculate_kpis(input_files):
+     return kpi1_df, kpi2_df
+ 
+ # Function to store KPIs in the database
+-def store_kpis_in_database(kpi1_df, kpi2_df, database_name='mobile_kpis.db'):
++def store_kpis_in_database(kpi1_df, kpi2_df):
+     conn = mariadb.connect(
+-        user="db_user",
+-        password="db_user_passwd",
++        user="root",
++        password="example",
+         host="localhost",
+-        database= database_name)
++        database="ETL")
+     with conn.cursor() as cursor:
+         try: 
+             # Store KPIs in MariaDB
+-            kpi1_df.to_sql('kpi1_table', cursor, if_exists='append', index=False, method='multi', chunksize=1000)
+-            kpi2_df.to_sql('kpi2_table', cursor, if_exists='append', index=False, method='multi', chunksize=1000)
++            kpi1_df.to_sql('ETL.KP1', cursor, if_exists='append', index=False, method='multi', chunksize=1000)
++            kpi2_df.to_sql('ETL.KP2', cursor, if_exists='append', index=False, method='multi', chunksize=1000)
+ 
+         except mariadb.Error as e: 
+             print(f"Error: {e}")
+@@ -63,7 +63,7 @@ def store_kpis_in_database(kpi1_df, kpi2_df, database_name='mobile_kpis.db'):
+ # Main function
+ def main():
+     # Specify the path to the raw files
+-    raw_files_path = '/mnt/c/Users/simeo/Desktop/Commsquare_Python_Software_Engineer_Programming_Challenge/**.txt'
++    raw_files_path = '**.txt'
+ 
+     # Get a list of all raw files
+     raw_files = glob(raw_files_path)
+diff --git a/docker-compose.yaml b/docker-compose.yaml
+new file mode 100644
+index 0000000..beded9c
+--- /dev/null
++++ b/docker-compose.yaml
+@@ -0,0 +1,17 @@
++version: '3.1'
++services:
++  db:
++    image: mariadb
++    restart: always
++    environment:
++      MARIADB_ROOT_PASSWORD: example
++      MYSQL_DATABASE: etl
++    volumes:
++      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
++    ports:
++      - "3306:3306"
++  adminer:
++    image: adminer
++    restart: always
++    ports:
++      - 8080:8080
+\ No newline at end of file
+diff --git a/init.sql b/init.sql
+new file mode 100644
+index 0000000..202a195
+--- /dev/null
++++ b/init.sql
+@@ -0,0 +1,20 @@
++CREATE DATABASE IF NOT EXISTS ETL;
++USE ETL;
++
++CREATE TABLE IF NOT EXISTS KP1 (
++    ID INT AUTO_INCREMENT PRIMARY KEY,
++    INTERVAL_START_TIMESTAMP BIGINT,
++    INTERVAL_END_TIMESTAMP BIGINT,
++    SERVICE_ID INT,
++    TOTAL_BYTES BIGINT,
++    INTERVAL_PERIOD VARCHAR(255)
++);
++
++CREATE TABLE IF NOT EXISTS KP2 (
++    ID INT AUTO_INCREMENT PRIMARY KEY,
++    INTERVAL_START_TIMESTAMP BIGINT,
++    INTERVAL_END_TIMESTAMP BIGINT,
++    CELL_ID INT,
++    NUMBER_OF_UNIQUE_USERS BIGINT,
++    INTERVAL_PERIOD VARCHAR(255)
++);
+\ No newline at end of file
