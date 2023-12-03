@@ -1,50 +1,6 @@
 # CommSquare_assignment
-Components:
-
-1. Data Ingestion:
-
-Responsible for ingesting raw data from CSV files.
-Monitors the designated folder for new files.
-Parses and validates the CSV data.
-2. Data Processing:
-Processes the raw data to calculate the required KPIs.
-Aggregates data based on the specified intervals (5-minute and 1-hour).
-Identifies top services and cells as per KPI definitions.
-Creates records for each KPI.
-3. Database Storage:
-
-Stores the calculated KPIs in the database.
-Two separate tables for each KPI (KPI1 and KPI2).
-Tables have fields based on the KPI definitions.
-4. Scheduler:
-
-Triggers the data processing at regular intervals (every 5 minutes).
-Runs hourly jobs for 1-hour intervals.
-5. Logging:
-
-Captures logs for data processing steps, errors, and system events.
-Useful for monitoring and debugging.
-6. Configuration Management:
-
-Stores configuration parameters, such as file paths, database connections, and interval definitions.
-Interactions:
-
-Data Ingestion → Data Processing:
-
-Data Ingestion triggers Data Processing when new CSV files are detected.
-Passes the parsed data to the Data Processing component.
-Data Processing → Database Storage:
-
-Data Processing creates records for KPI1 and KPI2.
-Sends the records to the Database Storage component for storage.
-Scheduler → Data Processing:
-
-Scheduler triggers Data Processing at regular intervals (every 5 minutes).
-
-Runs hourly jobs for 1-hour intervals.
-Data Processing → Logging:
-
-Logs events, errors, and processing details for monitoring and debugging purposes.
-Configuration Management → Data Ingestion, Data Processing, Database Storage:
-
-Provides configuration parameters to these components.
+Deliverables
+a. A high-level design of the system which will perform the KPI calculations based on the input raw files and store the result in database. The design should include the high-level blocks of the system and how these interact with each other. The design diagram can be done in a visualization tool or even sketched on paper and then scanned.
+b. A simple implementation (source code) written in Python for the calculation and storage of the KPIs. The program should take several 5-minute raw files as the input and store the calculated KPIs in database.
+c. Optionally: The design (URLs and response format) of a RESTful API which will provide the KPI data (e.g. for KPIs visualization in a web application). It is preferable that the response body is in JSON.
+d. Optionally: A simple implementation of the above API in Python. This can be done in Django or another framework. No HTTP server software (e.g. Apache) is required, since the Django runserver can be used.
