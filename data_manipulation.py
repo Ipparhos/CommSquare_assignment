@@ -1,13 +1,17 @@
 import pandas as pd
-# import sqlite3
 from glob import glob
-import mariadb 
 from sqlalchemy import create_engine
 import datetime
 import logging
+import argparse
 
-logging.basicConfig(filename ='app.log', 
-                        level = logging.INFO)
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", '--date', type=str, help= 'Insert date to perform ETL process. Date format DD/MM/YYYY', action='store', required=True)
+parser.add_argument("-i", '--interval', type=str, help='Choose between 5-minute or 1-hour interval', action='store', required=True)
+
+args = parser.parse_args()
+
+logging.basicConfig(filename ='app.log', level = logging.INFO)
 
 def __read_files(input_files):
     df = []
@@ -22,7 +26,11 @@ def __get_files(date):
     raw_files_path = 'ipflow_data.*.txt'
 
     format = '%d/%m/%Y'
-    input_date = datetime.datetime.strptime(date, format)
+    try:
+        input_date = datetime.datetime.strptime(date, format)
+    except:
+        logging.error("Invalid Date.")
+        exit(1)
     next_day = input_date + datetime.timedelta(days=1)
     timestamp = int(round(input_date.timestamp() * 1000))
     next_day_timestamp = int(round(next_day.timestamp() * 1000))
@@ -68,8 +76,8 @@ def __store_kpis_in_database(kpi1_df, kpi2_df):
    
     try: 
         # Store KPIs in MariaDB
-        kpi1_df.to_sql('KP1', engine, if_exists='append', index=False, method='multi', chunksize=1000)
-        kpi2_df.to_sql('KP2', engine, if_exists='append', index=False, method='multi', chunksize=1000)
+        kpi1_df.to_sql('KPI1', engine, if_exists='append', index=False, method='multi', chunksize=1000)
+        kpi2_df.to_sql('KPI2', engine, if_exists='append', index=False, method='multi', chunksize=1000)
         # Enhancment: check for uniqueness of values inserted
 
     except Exception as e: 
@@ -96,8 +104,8 @@ def ETL_operation(time_interval, date):
 
 
 def main():
-    time_interval = '5-minute'
-    date = "1/3/2017"
+    time_interval = args.interval
+    date = args.date
     ETL_operation(time_interval, date)   
 
 
